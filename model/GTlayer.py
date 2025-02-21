@@ -4,17 +4,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class GTLayer(nn.Module):
-
     def __init__(self, in_channels, out_channels, first=True):
         super(GTLayer, self).__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.first = first  # Mark whether this layer is the first GT layer
-        if self.first == True:
+        if self.first:
             self.conv1 = GTConv(in_channels, out_channels)
             self.conv2 = GTConv(in_channels, out_channels)
         else:
@@ -23,7 +22,7 @@ class GTLayer(nn.Module):
     def forward(self, A, H_=None):
         # A shape (b,1,c,n,n)
         # Compute the new graph structure
-        if self.first == True:
+        if self.first:
             a = self.conv1(A)
             batch = a.shape[0]
             num_node = a.shape[-1]
@@ -32,7 +31,10 @@ class GTLayer(nn.Module):
             b = b.view((-1, b.shape[-2], b.shape[-1]))
             H = torch.bmm(a, b)
             H = H.view((batch, -1, num_node, num_node))
-            W = [(F.softmax(self.conv1.weight, dim=2)).detach(), (F.softmax(self.conv2.weight, dim=2)).detach()]
+            W = [
+                (F.softmax(self.conv1.weight, dim=2)).detach(),
+                (F.softmax(self.conv2.weight, dim=2)).detach(),
+            ]
         else:
             a = self.conv1(A)
             batch = a.shape[0]

@@ -61,7 +61,7 @@ class GTN(nn.Module):
     # Standardized adjacency matrix
     def norm(self, H, add=True):
         # H shape（b,n,n）
-        if add == False:
+        if not add:
             H = H * ((torch.eye(H.shape[1]) == 0).type(torch.FloatTensor)).unsqueeze(0)
         else:
             H = H * ((torch.eye(H.shape[1]) == 0).type(torch.FloatTensor)).unsqueeze(0).to(device) + torch.eye(

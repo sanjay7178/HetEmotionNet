@@ -1,7 +1,7 @@
 import torch as t
 from model.GTblock import GTN
-from model.STDCN import *
-
+from model.STDCN import STDCN_with_GRU
+from torch import nn
 
 class permute(nn.Module):
     def __init__(self):
